@@ -21,6 +21,7 @@
 
 <script>
 import Column from '@/components/Column'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'board-view',
@@ -32,18 +33,35 @@ export default {
 
     data () {
         return {
-            listName: '',
-            boardList: [
-                { id: '1', name: 'Todo'},
-                { id: '2', name: 'Doing'},
-            ]
+            listName: ''
+        }
+    },
+
+    computed: {
+        ...mapState([
+            'fetchingData'
+        ]),
+        ...mapGetters([
+            'getListsByBoard'
+        ]),
+        boardList() {
+            return this.getListsByBoard(this.id)
         }
     },
 
     methods: {
+        ...mapActions([
+            'fetchList',
+            'addColumn'
+        ]),
         add () {
-            this.boardList.push({ name: this.listName })
+            this.addColumn({ board: this.id, name: this.listName })
+            this.listName = ''
         }
+    },
+
+    created () {
+        this.fetchList({ board: this.id })
     }
 }
 </script>
